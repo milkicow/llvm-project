@@ -469,6 +469,7 @@ set(LLVM_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include)
 # List of all targets to be built by default:
 set(LLVM_ALL_TARGETS
   AArch64
+  Arch52
   AMDGPU
   ARM
   AVR

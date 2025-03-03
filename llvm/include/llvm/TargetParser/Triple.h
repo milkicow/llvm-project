@@ -49,6 +49,7 @@ public:
     arm,            // ARM (little endian): arm, armv.*, xscale
     armeb,          // ARM (big endian): armeb
     aarch64,        // AArch64 (little endian): aarch64
+    arch52,
     aarch64_be,     // AArch64 (big endian): aarch64_be
     aarch64_32,     // AArch64 (little endian) ILP32: aarch64_32
     arc,            // ARC: Synopsys ARC
