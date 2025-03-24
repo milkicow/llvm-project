@@ -22,4 +22,5 @@ Arch52TargetMachine::Arch52TargetMachine(const Target &T, const Triple &TT,
                         CPU, FS, Options, Reloc::Static,
                         getEffectiveCodeModel(CM, CodeModel::Small), OL) {
   ARCH52_DUMP_CYAN
+  initAsmInfo();
 }
