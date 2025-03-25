@@ -8,6 +8,8 @@ namespace llvm {
 extern Target TheArch52Target;
 
 class Arch52TargetMachine : public LLVMTargetMachine {
+  std::unique_ptr<TargetLoweringObjectFile> TLOF;
+
 public:
   Arch52TargetMachine(const Target &T, const Triple &TT, StringRef CPU,
                       StringRef FS, const TargetOptions &Options,
@@ -17,6 +19,7 @@ public:
 
   // Pass Pipeline Configuration
   TargetPassConfig *createPassConfig(PassManagerBase &PM) override;
+  TargetLoweringObjectFile *getObjFileLowering() const override;
 };
 } // end namespace llvm
 
