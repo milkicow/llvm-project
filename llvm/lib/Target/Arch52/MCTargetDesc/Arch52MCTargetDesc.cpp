@@ -1,4 +1,5 @@
 #include "Arch52.h"
+#include "Arch52InstPrinter.h"
 #include "Arch52MCAsmInfo.h"
 #include "MCTargetDesc/Arch52Info.h"
 #include "TargetInfo/Arch52TargetInfo.h"
@@ -51,6 +52,15 @@ static MCAsmInfo *createArch52MCAsmInfo(const MCRegisterInfo &MRI,
   return MAI;
 }
 
+static MCInstPrinter *createArch52MCInstPrinter(const Triple &T,
+                                                unsigned SyntaxVariant,
+                                                const MCAsmInfo &MAI,
+                                                const MCInstrInfo &MII,
+                                                const MCRegisterInfo &MRI) {
+  ARCH52_DUMP_MAGENTA
+  return new Arch52InstPrinter(MAI, MII, MRI);
+}
+
 // We need to define this function for linking succeed
 extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeArch52TargetMC() {
   ARCH52_DUMP_MAGENTA
@@ -64,4 +74,8 @@ extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeArch52TargetMC() {
   // Register the MC subtarget info
   TargetRegistry::RegisterMCSubtargetInfo(TheArch52Target,
                                           createArch52MCSubtargetInfo);
+
+  // Register the MCInstPrinter
+  TargetRegistry::RegisterMCInstPrinter(TheArch52Target,
+                                        createArch52MCInstPrinter);
 }
