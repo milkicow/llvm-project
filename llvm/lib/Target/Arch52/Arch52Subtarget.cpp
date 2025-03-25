@@ -2,6 +2,8 @@
 #include "Arch52.h"
 #include "llvm/Target/TargetMachine.h"
 
+#include <string>
+
 using namespace llvm;
 
 #define DEBUG_TYPE "arch52-subtarget"
@@ -10,8 +12,8 @@ using namespace llvm;
 #define GET_SUBTARGETINFO_CTOR
 #include "Arch52GenSubtargetInfo.inc"
 
-Arch52Subtarget::Arch52Subtarget(const StringRef &CPU, const StringRef &TuneCPU,
-                                 const StringRef &FS, const TargetMachine &TM)
-    : Arch52GenSubtargetInfo(TM.getTargetTriple(), CPU, TuneCPU, FS) {
+Arch52Subtarget::Arch52Subtarget(const Triple &TT, const std::string &CPU,
+                                 const std::string &FS, const TargetMachine &TM)
+    : Arch52GenSubtargetInfo(TT, CPU, /*Tune*/CPU, FS), TLInfo(TM, *this) {
   ARCH52_DUMP_CYAN
 }
