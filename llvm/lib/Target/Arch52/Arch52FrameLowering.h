@@ -5,11 +5,13 @@
 #include "llvm/CodeGen/TargetFrameLowering.h"
 
 namespace llvm {
+class Arch52Subtarget;
 
 class Arch52FrameLowering : public TargetFrameLowering {
 public:
-  explicit Arch52FrameLowering()
-      : TargetFrameLowering(TargetFrameLowering::StackGrowsDown, Align(4), 0) {
+  Arch52FrameLowering(const Arch52Subtarget &STI)
+      : TargetFrameLowering(TargetFrameLowering::StackGrowsDown, Align(4), 0),
+        STI(STI) {
     ARCH52_DUMP_GREEN
   }
 
@@ -23,7 +25,10 @@ public:
   /// hasFP - Return true if the specified function should have a dedicated
   /// frame pointer register. For most targets this is true only if the function
   /// has variable sized allocas or if frame pointer elimination is disabled.
-  virtual bool hasFPImpl(const MachineFunction &MF) const = 0;
+  bool hasFP(const MachineFunction &MF) const override { return false; };
+
+private:
+    const Arch52Subtarget &STI;
 };
 
 } // namespace llvm
