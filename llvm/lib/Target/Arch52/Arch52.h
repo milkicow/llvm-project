@@ -3,6 +3,7 @@
 
 #include "MCTargetDesc/Arch52MCTargetDesc.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
 
 #define ARCH52_DUMP(Color)                                                     \
   {                                                                            \
@@ -17,5 +18,13 @@
 #define ARCH52_DUMP_CYAN ARCH52_DUMP(llvm::raw_ostream::CYAN)
 #define ARCH52_DUMP_MAGENTA ARCH52_DUMP(llvm::raw_ostream::MAGENTA)
 #define ARCH52_DUMP_WHITE ARCH52_DUMP(llvm::raw_ostream::WHITE)
+
+namespace llvm {
+class Arch52TargetMachine;
+class FunctionPass;
+
+FunctionPass *createArch52ISelDag(Arch52TargetMachine &TM, CodeGenOptLevel OptLevel);
+
+} // namespace llvm
 
 #endif // LLVM_LIB_TARGET_Arch52_Arch52_H

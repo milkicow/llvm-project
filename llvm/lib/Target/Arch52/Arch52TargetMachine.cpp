@@ -34,8 +34,13 @@ public:
   Arch52PassConfig(Arch52TargetMachine &TM, PassManagerBase &PM)
       : TargetPassConfig(TM, PM) {}
 
+  Arch52TargetMachine &getArch52TargetMachine() const {
+    return getTM<Arch52TargetMachine>();
+  }
+
   bool addInstSelector() override {
     ARCH52_DUMP_CYAN
+    addPass(createArch52ISelDag(getArch52TargetMachine(), getOptLevel()));
     return false;
   }
 };
