@@ -5,6 +5,7 @@ set(LLVM_TARGET_DEFINITIONS Arch52.td)
 tablegen(LLVM Arch52GenRegisterInfo.inc -gen-register-info)
 tablegen(LLVM Arch52GenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM Arch52GenSubtargetInfo.inc -gen-subtarget)
+tablegen(LLVM Arch52GenMCPseudoLowering.inc -gen-pseudo-lowering)
 
 add_public_tablegen_target(Arch52CommonTabelGen)
 
@@ -13,6 +14,7 @@ add_llvm_target(Arch52CodeGen
   Arch52RegisterInfo.cpp
   Arch52InstrInfo.cpp
   Arch52Subtarget.cpp
+  Arch52AsmPrinter.cpp
 
   LINK_COMPONENTS
   CodeGen
@@ -20,6 +22,7 @@ add_llvm_target(Arch52CodeGen
   Support
   Target
   Arch52Info
+  AsmPrinter
 
   ADD_TO_COMPONENT
   Arch52
