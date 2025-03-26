@@ -39,6 +39,10 @@ public:
 
   bool lowerPseudoInstExpansion(const MachineInstr *MI, MCInst &Inst);
 
+  bool lowerOperand(const MachineOperand &MO, MCOperand &MCOp) const {
+    return LowerArch52MachineOperandToMCOperand(MO, MCOp, *this);
+  }
+
   bool emitPseudoExpansionLowering(MCStreamer &OutStreamer,
                                    const MachineInstr *MI);
 };
@@ -52,6 +56,11 @@ public:
 void Arch52AsmPrinter::emitInstruction(const MachineInstr *MI) {
   ARCH52_DUMP_GREEN
   emitPseudoExpansionLowering(*OutStreamer, MI);
+
+  MCInst TmpInst;
+  if (!lowerArch52MachineInstrToMCInst(MI, TmpInst, *this)) {
+    EmitToStreamer(*OutStreamer, TmpInst);
+  }
 }
 
 // Force static initialization.

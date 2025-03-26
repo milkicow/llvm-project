@@ -20,6 +20,7 @@ add_llvm_target(Arch52CodeGen
   Arch52AsmPrinter.cpp
   Arch52ISelDagToDag.cpp
   Arch52ISelLowering.cpp
+  Arch52MCInstLower.cpp
 
   LINK_COMPONENTS
   CodeGen

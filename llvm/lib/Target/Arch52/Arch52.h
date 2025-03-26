@@ -22,8 +22,23 @@
 namespace llvm {
 class Arch52TargetMachine;
 class FunctionPass;
+class Arch52Subtarget;
+class AsmPrinter;
+class InstructionSelector;
+class MCInst;
+class MCOperand;
+class MachineInstr;
+class MachineOperand;
+class PassRegistry;
 
-FunctionPass *createArch52ISelDag(Arch52TargetMachine &TM, CodeGenOptLevel OptLevel);
+bool lowerArch52MachineInstrToMCInst(const MachineInstr *MI, MCInst &OutMI,
+                                     AsmPrinter &AP);
+bool LowerArch52MachineOperandToMCOperand(const MachineOperand &MO,
+                                          MCOperand &MCOp,
+                                          const AsmPrinter &AP);
+
+FunctionPass *createArch52ISelDag(Arch52TargetMachine &TM,
+                                  CodeGenOptLevel OptLevel);
 
 } // namespace llvm
 
