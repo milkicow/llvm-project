@@ -4,6 +4,7 @@
 #include "Arch52.h"
 #include "Arch52FrameLowering.h"
 #include "Arch52ISelLowering.h"
+#include "Arch52RegisterInfo.h"
 #include "llvm/CodeGen/TargetSubtargetInfo.h"
 
 #include <string>
@@ -16,6 +17,7 @@ namespace llvm {
 class Arch52Subtarget : public Arch52GenSubtargetInfo {
   Arch52TargetLowering TLInfo;
   Arch52FrameLowering FrameLowering;
+  Arch52RegisterInfo RegInfo;
 
 public:
   Arch52Subtarget(const Triple &TT, const std::string &CPU,
@@ -32,6 +34,10 @@ public:
   const Arch52FrameLowering *getFrameLowering() const override {
     ARCH52_DUMP_CYAN
     return &FrameLowering;
+  }
+  const Arch52RegisterInfo *getRegisterInfo() const override {
+    ARCH52_DUMP_CYAN
+    return &RegInfo;
   }
 };
 
