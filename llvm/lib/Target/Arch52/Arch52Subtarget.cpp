@@ -15,6 +15,6 @@ using namespace llvm;
 Arch52Subtarget::Arch52Subtarget(const Triple &TT, const std::string &CPU,
                                  const std::string &FS, const TargetMachine &TM)
     : Arch52GenSubtargetInfo(TT, CPU, /*Tune*/ CPU, FS), TLInfo(TM, *this),
-      FrameLowering(*this) {
+      FrameLowering(*this), InstrInfo() {
   ARCH52_DUMP_CYAN
 }
