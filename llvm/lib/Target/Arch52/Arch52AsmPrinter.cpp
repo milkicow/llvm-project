@@ -55,7 +55,9 @@ public:
 
 void Arch52AsmPrinter::emitInstruction(const MachineInstr *MI) {
   ARCH52_DUMP_GREEN
-  emitPseudoExpansionLowering(*OutStreamer, MI);
+  if (emitPseudoExpansionLowering(*OutStreamer, MI)) {
+    return;
+  }
 
   MCInst TmpInst;
   if (!lowerArch52MachineInstrToMCInst(MI, TmpInst, *this)) {

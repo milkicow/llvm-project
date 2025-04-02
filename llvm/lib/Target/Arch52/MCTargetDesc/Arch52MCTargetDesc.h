@@ -1,6 +1,7 @@
 #ifndef LLVM_LIB_TARGET_ARCH52_NCTARGETDESC_ARCH52MCTARGETDESC_H
 #define LLVM_LIB_TARGET_ARCH52_NCTARGETDESC_ARCH52MCTARGETDESC_H
 
+#include <memory>
 namespace llvm {
 class MCCodeEmitter;
 class MCContext;
@@ -18,6 +19,9 @@ MCAsmBackend *createArch52AsmBackend(const Target &T,
                                      const MCSubtargetInfo &STI,
                                      const MCRegisterInfo &MRI,
                                      const MCTargetOptions &Options);
+
+std::unique_ptr<MCObjectTargetWriter>
+createArch52ELFObjectWriter(bool Is64Bit, uint8_t OSABI);
 
 } // namespace llvm
 

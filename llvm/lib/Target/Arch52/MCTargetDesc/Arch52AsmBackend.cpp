@@ -52,14 +52,17 @@ public:
   }
 
   std::unique_ptr<MCObjectTargetWriter>
-  createObjectTargetWriter() const override {}
+  createObjectTargetWriter() const override {
+    uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(OSType);
+    return createArch52ELFObjectWriter(false, OSABI);
+  }
 };
 
 } // end anonymous namespace
 
 MCAsmBackend *llvm::createArch52AsmBackend(const Target &T,
-                                        const MCSubtargetInfo &STI,
-                                        const MCRegisterInfo &MRI,
-                                        const MCTargetOptions &Options) {
+                                           const MCSubtargetInfo &STI,
+                                           const MCRegisterInfo &MRI,
+                                           const MCTargetOptions &Options) {
   return new ELFArch52AsmBackend(T, STI.getTargetTriple().getOS());
 }
