@@ -5,9 +5,19 @@ namespace llvm {
 class MCCodeEmitter;
 class MCContext;
 class MCInstrInfo;
+class MCAsmBackend;
+class MCObjectTargetWriter;
+class MCRegisterInfo;
+class MCSubtargetInfo;
+class MCTargetOptions;
+class Target;
 
 MCCodeEmitter *createArch52MCCodeEmitter(const MCInstrInfo &MCII,
                                          MCContext &Ctx);
+MCAsmBackend *createArch52AsmBackend(const Target &T,
+                                     const MCSubtargetInfo &STI,
+                                     const MCRegisterInfo &MRI,
+                                     const MCTargetOptions &Options);
 
 } // namespace llvm
 

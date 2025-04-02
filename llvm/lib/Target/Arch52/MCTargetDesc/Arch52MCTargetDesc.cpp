@@ -81,4 +81,6 @@ extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeArch52TargetMC() {
   // Register the MC Code Emitter
   TargetRegistry::RegisterMCCodeEmitter(TheArch52Target,
                                         createArch52MCCodeEmitter);
+  // Register asm backend
+  TargetRegistry::RegisterMCAsmBackend(TheArch52Target, createArch52AsmBackend);
 }
