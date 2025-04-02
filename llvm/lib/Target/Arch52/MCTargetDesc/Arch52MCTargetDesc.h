@@ -1,6 +1,16 @@
 #ifndef LLVM_LIB_TARGET_ARCH52_NCTARGETDESC_ARCH52MCTARGETDESC_H
 #define LLVM_LIB_TARGET_ARCH52_NCTARGETDESC_ARCH52MCTARGETDESC_H
 
+namespace llvm {
+class MCCodeEmitter;
+class MCContext;
+class MCInstrInfo;
+
+MCCodeEmitter *createArch52MCCodeEmitter(const MCInstrInfo &MCII,
+                                         MCContext &Ctx);
+
+} // namespace llvm
+
 // Defines symbolic names for Arch52 registers.  This defines a mapping from
 // register name to register number.
 //
