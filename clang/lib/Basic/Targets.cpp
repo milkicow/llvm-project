@@ -13,6 +13,7 @@
 
 #include "Targets.h"
 
+#include "Targets/Arch52.h"
 #include "Targets/AArch64.h"
 #include "Targets/AMDGPU.h"
 #include "Targets/ARC.h"
@@ -116,6 +117,9 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
   switch (Triple.getArch()) {
   default:
     return nullptr;
+
+  case llvm::Triple::arch52:
+    return std::make_unique<Arch52TargetInfo>(Triple, Opts);
 
   case llvm::Triple::arc:
     return std::make_unique<ARCTargetInfo>(Triple, Opts);
