@@ -53,3 +53,15 @@ let isAsCheapAsAMove = 1, isCodeGenOnly = 1, isReMaterializable = 1, r2 = 0 in
 def MOVLI : Arch52Inst<0xAC, (outs GPR:$r1), (ins simm16:$r3_imm),
                     "MOVli $r1 $r3_imm",
                     [(set GPR:$r1, simm16:$r3_imm)]>;
+
+// putdisplaypixel
+def PUTDISPLAYPIXEL : Arch52Inst<0xBB, (outs), (ins GPR:$r1, GPR:$r2, GPR:$r3_imm),
+                                "PUTDISPLAYPIXEL $r1 $r2 $r3_imm", [(int_arch52_putdisplaypixel GPR:$r1, GPR:$r2, GPR:$r3_imm)]>;
+
+// flush
+let r1 = 0, r2 = 0, r3_imm = 0 in
+def FLUSH : Arch52Inst<0xAA, (outs), (ins), "FLUSH", [(int_arch52_flush)]>;
+
+// neighbors
+// def NEIGHBORS : Arch52Inst<0xCC, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
+//                              "NEIGHBORS $r1 $r2 $r3_imm", [(set GPR:$r1, (int_arch52_neighbors GPR:$r2, GPR:$r3_imm))]>;
