@@ -356,6 +356,16 @@ namespace clang {
     };
   }
 
+  // Arch52 builtins
+  namespace Arch52 {
+    enum {
+      LastTIBuiltin = clang::Builtin::FirstTSBuiltin-1,
+#define BUILTIN(ID, TYPE, ATTRS) BI##ID,
+#include "clang/Basic/BuiltinsArch52.def"
+      LastTSBuiltin
+    };
+  }
+
   /// WebAssembly builtins
   namespace WebAssembly {
     enum {
@@ -371,7 +381,7 @@ namespace clang {
        PPC::LastTSBuiltin, NVPTX::LastTSBuiltin, AMDGPU::LastTSBuiltin,
        X86::LastTSBuiltin, VE::LastTSBuiltin, RISCV::LastTSBuiltin,
        Hexagon::LastTSBuiltin, Mips::LastTSBuiltin, XCore::LastTSBuiltin,
-       SystemZ::LastTSBuiltin, WebAssembly::LastTSBuiltin});
+       SystemZ::LastTSBuiltin, WebAssembly::LastTSBuiltin, Arch52::LastTSBuiltin});
 
 } // end namespace clang.
 

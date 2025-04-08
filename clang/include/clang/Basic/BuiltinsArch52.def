@@ -1,0 +1,4 @@
+BUILTIN(arch52PutDisplayPixel, "vUiUiUi", "nc")
+BUILTIN(arch52Flush, "v", "nc")
+
+#undef BUILTIN
