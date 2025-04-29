@@ -21,7 +21,7 @@ class SImmAsmOperand<int width> : AsmOperandClass {
   let DiagnosticType = !strconcat("Invalid", Name);
 }
 
-def simm16 : Operand<i32>, ImmLeaf<i32, [{return isInt<16>(Imm);}]> {
+def simm16 : Operand<i32>, ImmLeaf<i32, [{return isUInt<16>(Imm);}]> {
   let ParserMatchClass = SImmAsmOperand<16>;
   let EncoderMethod = "getSImm16OpValue";
   let DecoderMethod = "decodeSImmOperand<16>";
@@ -49,6 +49,16 @@ def btarget16 : Operand<OtherVT> {
   let OperandType = "OPERAND_PCREL";
 }
 
+def LI16 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xffff,
+                                  SDLoc(N), MVT::i32);
+}]>;
+
+def HI16 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
+                                  MVT::i32);
+}]>;
+
 
 //===----------------------------------------------------------------------===//
 // Arch52 Instructions
@@ -73,6 +83,17 @@ def MOVLI : Arch52Inst<0xAC, (outs GPR:$r1), (ins simm16:$r3_imm),
                     "MOVli $r1 $r3_imm",
                     [(set GPR:$r1, simm16:$r3_imm)]>;
 
+// movhi
+let isAsCheapAsAMove = 1, isCodeGenOnly = 1, isReMaterializable = 1, r2 = 0  in
+def MOVHI : Arch52Inst<0xAF, (outs GPR:$r1), (ins simm16:$r3_imm),
+                    "MOVhi $r1 $r3_imm", []>;
+
+// ORI
+let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
+def ORI : Arch52Inst<0x44, (outs GPR:$r1), (ins GPR:$r2, simm16:$r3_imm),
+                  "ORi $r1 $r2 $r3_imm", [(set GPR:$r1, (or GPR:$r2, simm16:$r3_imm))]>;
+
+
 // putdisplaypixel
 def PUTDISPLAYPIXEL : Arch52Inst<0xBB, (outs), (ins GPR:$r1, GPR:$r2, GPR:$r3_imm),
                                 "PUTDISPLAYPIXEL $r1 $r2 $r3_imm", [(int_arch52_putdisplaypixel GPR:$r1, GPR:$r2, GPR:$r3_imm)]>;
@@ -84,3 +105,10 @@ def FLUSH : Arch52Inst<0xAA, (outs), (ins), "FLUSH", [(int_arch52_flush)]>;
 // neighbors
 // def NEIGHBORS : Arch52Inst<0xCC, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
 //                              "NEIGHBORS $r1 $r2 $r3_imm", [(set GPR:$r1, (int_arch52_neighbors GPR:$r2, GPR:$r3_imm))]>;
+
+//===----------------------------------------------------------------------===//
+// Arch52 Other patterns
+//===----------------------------------------------------------------------===//
+
+// i32 imm
+def : Pat<(i32 imm:$r3_imm), (ORI (MOVHI (HI16 imm:$r3_imm)), (LI16 imm:$r3_imm))>;
