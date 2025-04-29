@@ -21,13 +21,14 @@ void Arch52InstPrinter::printRegName(raw_ostream &O, MCRegister Reg) const {
 }
 
 void Arch52InstPrinter::printInst(const MCInst *MI, uint64_t Address,
-                               StringRef Annot, const MCSubtargetInfo &STI,
-                               raw_ostream &O) {
+                                  StringRef Annot, const MCSubtargetInfo &STI,
+                                  raw_ostream &O) {
   printInstruction(MI, Address, O);
   printAnnotation(O, Annot);
 }
 
-void Arch52InstPrinter::printOperand(const MCInst *MI, int OpNo, raw_ostream &O) {
+void Arch52InstPrinter::printOperand(const MCInst *MI, int OpNo,
+                                     raw_ostream &O) {
   const MCOperand &MO = MI->getOperand(OpNo);
 
   if (MO.isReg()) {
@@ -42,4 +43,18 @@ void Arch52InstPrinter::printOperand(const MCInst *MI, int OpNo, raw_ostream &O)
 
   assert(MO.isExpr() && "Unknown operand kind in printOperand");
   MO.getExpr()->print(O, &MAI);
+}
+
+void Arch52InstPrinter::printBranchOperand(const MCInst *MI, uint64_t Address,
+                                           unsigned OpNo, raw_ostream &O) {
+  const MCOperand &MO = MI->getOperand(OpNo);
+  if (!MO.isImm())
+    return printOperand(MI, OpNo, O);
+
+  if (PrintBranchImmAsAddress) {
+    uint32_t Target = Address + MO.getImm();
+    O << formatHex(static_cast<uint64_t>(Target));
+  } else {
+    O << MO.getImm();
+  }
 }
