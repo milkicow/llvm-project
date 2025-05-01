@@ -48,6 +48,7 @@ Arch52TargetLowering::Arch52TargetLowering(const TargetMachine &TM,
     setOperationAction(Opc, MVT::i32, Expand);
 
   setOperationAction(ISD::ADD, MVT::i32, Legal);
+  setOperationAction(ISD::SUB, MVT::i32, Legal);
   setOperationAction(ISD::MUL, MVT::i32, Legal);
   // Add ISD
   setOperationAction(ISD::LOAD, MVT::i32, Legal);

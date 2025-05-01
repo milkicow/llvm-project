@@ -88,6 +88,17 @@ let isAsCheapAsAMove = 1, isCodeGenOnly = 1, isReMaterializable = 1, r2 = 0  in
 def MOVHI : Arch52Inst<0xAF, (outs GPR:$r1), (ins simm16:$r3_imm),
                     "MOVhi $r1 $r3_imm", []>;
 
+// add
+let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
+def ADD : Arch52Inst<0x30, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
+              "ADD $r1 $r2 $r3_imm", [(set GPR:$r1, (add GPR:$r2, GPR:$r3_imm))]>;
+
+// sub
+let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
+def SUB : Arch52Inst<0x31, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
+              "SUB $r1 $r2 $r3_imm", [(set GPR:$r1, (sub GPR:$r2, GPR:$r3_imm))]>;
+
+
 // ORI
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
 def ORI : Arch52Inst<0x44, (outs GPR:$r1), (ins GPR:$r2, simm16:$r3_imm),

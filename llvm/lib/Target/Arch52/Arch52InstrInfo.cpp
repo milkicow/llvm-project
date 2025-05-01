@@ -15,3 +15,16 @@ using namespace llvm;
 #define DEBUG_TYPE "Arch52-inst-info"
 
 Arch52InstrInfo::Arch52InstrInfo() : Arch52GenInstrInfo() { ARCH52_DUMP_GREEN }
+
+void Arch52InstrInfo::copyPhysReg(MachineBasicBlock &MBB,
+                                  MachineBasicBlock::iterator MBBI,
+                                  const DebugLoc &DL, MCRegister DstReg,
+                                  MCRegister SrcReg, bool KillSrc) const {
+  if (Arch52::GPRRegClass.contains(DstReg, SrcReg)) {
+    BuildMI(MBB, MBBI, DL, get(Arch52::ORI), DstReg)
+        .addReg(SrcReg, getKillRegState(KillSrc))
+        .addImm(0);
+    return;
+  }
+  llvm_unreachable("can't copyPhysReg");
+}
