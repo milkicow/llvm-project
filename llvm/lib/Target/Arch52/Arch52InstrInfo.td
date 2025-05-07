@@ -111,6 +111,11 @@ let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
 def SUB : Arch52Inst<0x31, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
               "SUB $r1 $r2 $r3_imm", [(set GPR:$r1, (sub GPR:$r2, GPR:$r3_imm))]>;
 
+// mul
+let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
+def MUL : Arch52Inst<0x32, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
+              "MUL $r1 $r2 $r3_imm", [(set GPR:$r1, (mul GPR:$r2, GPR:$r3_imm))]>;
+
 def BaseAddr : ComplexPattern<iPTR, 1, "SelectBaseAddr">;
 def AddrFI : ComplexPattern<iPTR, 1, "SelectAddrFI", [frameindex], []>;
 
