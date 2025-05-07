@@ -66,7 +66,8 @@ private:
                       const SmallVectorImpl<ISD::OutputArg> &ArgsFlags,
                       LLVMContext &Context) const override;
 
-  SDValue LowerGlobalAddress(SDValue OP, SelectionDAG &DAG) const;
+  SDValue lowerGlobalAddress(SDValue Op, SelectionDAG &DAG) const;
+  SDValue lowerBR_CC(SDValue Op, SelectionDAG &DAG) const;
 
   SDValue LowerOperation(SDValue Op, SelectionDAG &DAG) const override;
 };

@@ -60,6 +60,15 @@ def HI16 : SDNodeXForm<imm, [{
 }]>;
 
 
+
+def SDT_Arch52BrCC : SDTypeProfile<0, 4, [ SDTCisSameAs<0, 1>,
+                                           SDTCisVT<2, OtherVT>,
+                                           SDTCisVT<3, OtherVT>]>;
+
+def arch52_brcc     : SDNode<"Arch52ISD::BR_CC", SDT_Arch52BrCC,
+                            [SDNPHasChain]>;
+
+
 //===----------------------------------------------------------------------===//
 // Arch52 Instructions
 //===----------------------------------------------------------------------===//
@@ -105,6 +114,10 @@ def SUB : Arch52Inst<0x31, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
 def BaseAddr : ComplexPattern<iPTR, 1, "SelectBaseAddr">;
 def AddrFI : ComplexPattern<iPTR, 1, "SelectAddrFI", [frameindex], []>;
 
+class PatBcc<CondCode Cond, Arch52Inst Inst>
+    : Pat<(arch52_brcc GPR:$r1, GPR:$r2, Cond, bb:$r3_imm),
+          (Inst GPR:$r1, GPR:$r2, btarget16:$r3_imm)>;
+
 // store
 let hasSideEffects = 0, mayLoad = 0, mayStore = 1 in
 def STORE: Arch52Inst<0x32, (outs), (ins GPR:$r1, GPR:$r2, simm16:$r3_imm),
@@ -133,6 +146,27 @@ def : Pat<(i32 (load (IsOrAdd AddrFI:$r2, simm16:$r3_imm))),
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
 def ORI : Arch52Inst<0x44, (outs GPR:$r1), (ins GPR:$r2, simm16:$r3_imm),
                   "ORi $r1 $r2 $r3_imm", [(set GPR:$r1, (or GPR:$r2, simm16:$r3_imm))]>;
+
+
+
+let hasSideEffects = 0, mayLoad = 0, mayStore = 0, isBranch = 1, isTerminator = 1 in
+class BranchCC<bits<8> op, string opcodestr>
+    : Arch52Inst<op, (outs), (ins GPR:$r1, GPR:$r2, btarget16:$r3_imm),
+              !strconcat(opcodestr, " $r1 $r2 $r3_imm"), []>;
+
+def BEQ  : BranchCC<0x70, "B.EQ">;
+def BNE  : BranchCC<0x71, "B.NE">;
+def BLE  : BranchCC<0x72, "B.LE">;
+def BGT  : BranchCC<0x73, "B.GT">;
+def BLEU  : BranchCC<0x74, "B.LEU">;
+def BGTU  : BranchCC<0x75, "B.GTU">;
+
+def : PatBcc<SETEQ, BEQ>;
+def : PatBcc<SETNE, BNE>;
+def : PatBcc<SETLE, BLE>;
+def : PatBcc<SETGT, BGT>;
+def : PatBcc<SETULE, BLEU>;
+def : PatBcc<SETUGT, BGTU>;
 
 
 // putdisplaypixel

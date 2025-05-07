@@ -5,9 +5,21 @@
 
 namespace llvm {
 
+namespace Arch52CC {
+enum CondCode {
+  EQ,
+  NE,
+  LE,
+  GT,
+  LEU,
+  GTU,
+  INVALID,
+};
+}
+
 namespace Arch52Op {
 enum OperandType : unsigned {
-    OPERAND_SIMM16 = MCOI::OPERAND_FIRST_TARGET,
+  OPERAND_SIMM16 = MCOI::OPERAND_FIRST_TARGET,
 };
 } // namespace Arch52Op
 

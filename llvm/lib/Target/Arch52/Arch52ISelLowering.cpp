@@ -576,7 +576,7 @@ Arch52TargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
 //  Global Address Implementation
 //===----------------------------------------------------------------------===//
 
-SDValue Arch52TargetLowering::LowerGlobalAddress(SDValue Op,
+SDValue Arch52TargetLowering::lowerGlobalAddress(SDValue Op,
                                                  SelectionDAG &DAG) const {
   SDLoc DL(Op);
   const GlobalValue *GV = cast<GlobalAddressSDNode>(Op)->getGlobal();
@@ -630,11 +630,43 @@ bool Arch52TargetLowering::isLegalAddressingMode(const DataLayout &DL,
   return true;
 }
 
+static void translateSetCCForBranch(const SDLoc &DL, SDValue &LHS, SDValue &RHS,
+                                    ISD::CondCode &CC, SelectionDAG &DAG) {
+  switch (CC) {
+  default:
+    break;
+  case ISD::SETLT:
+  case ISD::SETGE:
+    CC = ISD::getSetCCSwappedOperands(CC);
+    std::swap(LHS, RHS);
+    break;
+  }
+}
+
+SDValue Arch52TargetLowering::lowerBR_CC(SDValue Op, SelectionDAG &DAG) const {
+  SDValue CC = Op.getOperand(1);
+  SDValue LHS = Op.getOperand(2);
+  SDValue RHS = Op.getOperand(3);
+  SDValue Block = Op->getOperand(4);
+  SDLoc DL(Op);
+
+  assert(LHS.getValueType() == MVT::i32);
+
+  ISD::CondCode CCVal = cast<CondCodeSDNode>(CC)->get();
+  translateSetCCForBranch(DL, LHS, RHS, CCVal, DAG);
+  SDValue TargetCC = DAG.getCondCode(CCVal);
+
+  return DAG.getNode(Arch52ISD::BR_CC, DL, Op.getValueType(), Op.getOperand(0),
+                     LHS, RHS, TargetCC, Block);
+}
+
 SDValue Arch52TargetLowering::LowerOperation(SDValue Op,
                                              SelectionDAG &DAG) const {
   switch (Op.getOpcode()) {
   case ISD::GlobalAddress:
-    return LowerGlobalAddress(Op, DAG);
+    return lowerGlobalAddress(Op, DAG);
+  case ISD::BR_CC:
+    return lowerBR_CC(Op, DAG);
   default:
     llvm_unreachable("unimplemented operand");
   }
