@@ -60,6 +60,9 @@ Arch52TargetLowering::Arch52TargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::BR_CC, MVT::i32, Custom);
 
   setOperationAction(ISD::FRAMEADDR, MVT::i32, Legal);
+
+  // Add support for global variables
+  setOperationAction(ISD::GlobalAddress, MVT::i32, Custom);
 }
 
 const char *Arch52TargetLowering::getTargetNodeName(unsigned Opcode) const {
@@ -69,6 +72,9 @@ const char *Arch52TargetLowering::getTargetNodeName(unsigned Opcode) const {
     return "Arch52ISD::CALL";
   case Arch52ISD::RET:
     return "Arch52ISD::RET";
+  case Arch52ISD::GlobalAddress:
+    ARCH52_DUMP_RED
+    return "Arch52ISD::GlobalAddress";
   }
   return nullptr;
 }
@@ -567,6 +573,23 @@ Arch52TargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
 }
 
 //===----------------------------------------------------------------------===//
+//  Global Address Implementation
+//===----------------------------------------------------------------------===//
+
+SDValue Arch52TargetLowering::LowerGlobalAddress(SDValue Op,
+                                                 SelectionDAG &DAG) const {
+  SDLoc DL(Op);
+  const GlobalValue *GV = cast<GlobalAddressSDNode>(Op)->getGlobal();
+  int64_t Offset = cast<GlobalAddressSDNode>(Op)->getOffset();
+
+  // Create the TargetGlobalAddress node, folding in the constant offset.
+  SDValue Result = DAG.getTargetGlobalAddress(
+      GV, DL, getPointerTy(DAG.getDataLayout()), Offset);
+  return DAG.getNode(Arch52ISD::GlobalAddress, DL,
+                     getPointerTy(DAG.getDataLayout()), Result);
+}
+
+//===----------------------------------------------------------------------===//
 // Target Optimization Hooks
 //===----------------------------------------------------------------------===//
 
@@ -605,4 +628,14 @@ bool Arch52TargetLowering::isLegalAddressingMode(const DataLayout &DL,
   }
 
   return true;
+}
+
+SDValue Arch52TargetLowering::LowerOperation(SDValue Op,
+                                             SelectionDAG &DAG) const {
+  switch (Op.getOpcode()) {
+  case ISD::GlobalAddress:
+    return LowerGlobalAddress(Op, DAG);
+  default:
+    llvm_unreachable("unimplemented operand");
+  }
 }

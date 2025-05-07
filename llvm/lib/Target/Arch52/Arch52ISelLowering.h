@@ -18,6 +18,7 @@ enum NodeType : unsigned {
   RET,
   CALL,
   BR_CC,
+  GlobalAddress
 };
 
 } // namespace Arch52ISD
@@ -64,6 +65,10 @@ private:
                       bool isVarArg,
                       const SmallVectorImpl<ISD::OutputArg> &ArgsFlags,
                       LLVMContext &Context) const override;
+
+  SDValue LowerGlobalAddress(SDValue OP, SelectionDAG &DAG) const;
+
+  SDValue LowerOperation(SDValue Op, SelectionDAG &DAG) const override;
 };
 
 } // namespace llvm

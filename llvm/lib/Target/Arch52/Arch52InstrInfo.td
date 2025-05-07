@@ -77,6 +77,10 @@ def PseudoRET : Arch52PseudoInst<(outs), (ins), "# PseudoRET",
                 [(arch52_ret)]>,
                 PseudoInstExpansion<(BR R0)>;
 
+def IsOrAdd: PatFrag<(ops node:$A, node:$B), (or node:$A, node:$B), [{
+  return isOrEquivalentToAdd(N);
+}]>;
+
 // movli
 let isAsCheapAsAMove = 1, isCodeGenOnly = 1, isReMaterializable = 1, r2 = 0 in
 def MOVLI : Arch52Inst<0xAC, (outs GPR:$r1), (ins simm16:$r3_imm),
@@ -97,6 +101,32 @@ def ADD : Arch52Inst<0x30, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in
 def SUB : Arch52Inst<0x31, (outs GPR:$r1), (ins GPR:$r2, GPR:$r3_imm),
               "SUB $r1 $r2 $r3_imm", [(set GPR:$r1, (sub GPR:$r2, GPR:$r3_imm))]>;
+
+def BaseAddr : ComplexPattern<iPTR, 1, "SelectBaseAddr">;
+def AddrFI : ComplexPattern<iPTR, 1, "SelectAddrFI", [frameindex], []>;
+
+// store
+let hasSideEffects = 0, mayLoad = 0, mayStore = 1 in
+def STORE: Arch52Inst<0x32, (outs), (ins GPR:$r1, GPR:$r2, simm16:$r3_imm),
+              "STORE $r1 ${r2} ${r3_imm}",
+              []>;
+def : Pat<(store (i32 GPR:$r1), BaseAddr:$r2),
+        (STORE GPR:$r1, BaseAddr:$r2, 0)>;
+def : Pat<(store (i32 GPR:$r1), (add BaseAddr:$r2, simm16:$r3_imm)),
+        (STORE GPR:$r1, BaseAddr:$r2, simm16:$r3_imm)>;
+def : Pat<(store (i32 GPR:$r1), (IsOrAdd AddrFI:$r2, simm16:$r3_imm)),
+         (STORE GPR:$r1, AddrFI:$r2, simm16:$r3_imm)>;
+
+// load
+let hasSideEffects = 0, mayLoad = 1, mayStore = 0 in
+def LOAD: Arch52Inst<0x33, (outs GPR:$r1), (ins GPR:$r2, simm16:$r3_imm),
+              "LOAD $r1 ${r2} ${r3_imm}",
+              []>;
+def : Pat<(i32 (load BaseAddr:$r2)), (LOAD BaseAddr:$r2, 0)>;
+def : Pat<(i32 (load (add BaseAddr:$r2, simm16:$r3_imm))),
+          (LOAD BaseAddr:$r2, simm16:$r3_imm)>;
+def : Pat<(i32 (load (IsOrAdd AddrFI:$r2, simm16:$r3_imm))),
+           (LOAD AddrFI:$r2, simm16:$r3_imm)>;
 
 
 // ORI
