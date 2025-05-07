@@ -168,6 +168,17 @@ def : PatBcc<SETGT, BGT>;
 def : PatBcc<SETULE, BLEU>;
 def : PatBcc<SETUGT, BGTU>;
 
+let hasSideEffects = false, mayLoad = false, mayStore = false in
+class Shifts<bits<8> op, SDPatternOperator OpNode, string opcodestr>
+    : Arch52Inst<op, (outs GPR:$r1), (ins GPR:$r2, simm16:$r3_imm),
+                !strconcat(opcodestr, " $r1, $r2, $r3_imm"),
+                [(set GPR:$r1, (OpNode GPR:$r2, simm16:$r3_imm))]>;
+
+
+def SRL : Shifts<0x81, srl, "SRL">;
+def SRA : Shifts<0x82, sra, "SRA">;
+def SHL : Shifts<0x83, shl, "SHL">;
+
 
 // putdisplaypixel
 def PUTDISPLAYPIXEL : Arch52Inst<0xBB, (outs), (ins GPR:$r1, GPR:$r2, GPR:$r3_imm),
